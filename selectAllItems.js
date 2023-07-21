@@ -9,6 +9,7 @@
 // @grant        none
 // ==/UserScript==
 /*
+    How to use: https://sangtacviet.vip/the-luc/tang-bao-cac/?s=lt-tld-tkd4-tkd6
     lt = linh thach
     tld = tu linh dan
     tvd = thien van dan
