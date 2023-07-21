@@ -16,6 +16,7 @@
     cp = cong phap
     tkd = tu khi dan
     ttd = tay tuy dan
+    all = chon tat ca
 */
 
 (function() {
@@ -108,12 +109,15 @@
             tag: 2,
             l: 4
         },
+        'all': {
+
+        }
     }
     var list = search.split('=')[1].split('-');
     list.forEach(s => {
         var item = map[s];
         if (item) {
-            document.querySelectorAll(`#tuitruvat a[e="${item.e}"]${item.l ? `[l="${item.l}"]` : ''}[tag="${item.tag}"]:not([hide="hide"])`).forEach(el=>{
+            document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}:not([hide="hide"])`).forEach(el=>{
                 el.click();
                 var n = el.getAttribute('n');
                 if (n) Array.from({length: n-1}, () => el.click());
