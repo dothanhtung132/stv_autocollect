@@ -14,7 +14,7 @@
           </elementProp>
           <elementProp name="delayTime" elementType="Argument">
             <stringProp name="Argument.name">delayTime</stringProp>
-            <stringProp name="Argument.value">120000</stringProp>
+            <stringProp name="Argument.value">300000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -262,9 +262,12 @@ props.put(&quot;${username}_PHPSESSID&quot;,&quot;${COOKIE_PHPSESSID}&quot;);
             <stringProp name="filename"></stringProp>
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="script">def stringToSearch = prev.getResponseDataAsString();
-if (stringToSearch.contains(&quot;name&quot;)) {
+if (stringToSearch.contains(&quot;\&quot;name\&quot;&quot;)) {
 	vars.put(&quot;fcollect&quot;, &quot;fcollect&quot;);
-}</stringProp>
+} else {
+	vars.put(&quot;fcollect&quot;, &quot;not found&quot;);
+}
+</stringProp>
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
