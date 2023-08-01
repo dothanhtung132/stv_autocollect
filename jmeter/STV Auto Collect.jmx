@@ -9,7 +9,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="numberOfUsers" elementType="Argument">
             <stringProp name="Argument.name">numberOfUsers</stringProp>
-            <stringProp name="Argument.value">30</stringProp>
+            <stringProp name="Argument.value">42</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="delayTime" elementType="Argument">
@@ -39,7 +39,7 @@
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">proxy,port</stringProp>
         <boolProp name="ignoreFirstLine">false</boolProp>
-        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="delimiter">:</stringProp>
         <boolProp name="quotedData">false</boolProp>
         <boolProp name="recycle">true</boolProp>
         <boolProp name="stopThread">false</boolProp>
@@ -73,7 +73,7 @@ log.info(&quot;clear login&quot;)</stringProp>
           <stringProp name="LoopController.loops">1</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${numberOfUsers}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__groovy(new File(&apos;D:/JMeter/account_list.csv&apos;).readLines().size(),)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.delayedStart">false</boolProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
@@ -82,14 +82,6 @@ log.info(&quot;clear login&quot;)</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
       </ThreadGroup>
       <hashTree>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
-          <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="script">log.info(&quot;starting login use...&quot; + ${username})</stringProp>
-        </JSR223PreProcessor>
-        <hashTree/>
         <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
           <collectionProp name="CookieManager.cookies"/>
           <boolProp name="CookieManager.clearEachIteration">true</boolProp>
@@ -99,7 +91,8 @@ log.info(&quot;clear login&quot;)</stringProp>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller" enabled="true">
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
-          <stringProp name="IfController.condition">${__groovy((props.get(&quot;${username}_access&quot;)+&quot;&quot;).contains(&quot;null&quot;) || (props.get(&quot;${username}_access&quot;)+&quot;&quot;).contains(&quot;{COOKIE_access}&quot;),)}</stringProp>
+          <stringProp name="IfController.condition">${__groovy(log.info(&quot;tung log: ${username} - &quot; + props.get(&quot;${username}_access&quot;)),)}
+${__groovy((props.get(&quot;${username}_access&quot;)+&quot;&quot;).contains(&quot;null&quot;) || (props.get(&quot;${username}_access&quot;)+&quot;&quot;).contains(&quot;{COOKIE_access}&quot;),)}</stringProp>
         </IfController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login" enabled="true">
@@ -187,7 +180,7 @@ props.put(&quot;${username}_PHPSESSID&quot;,&quot;${COOKIE_PHPSESSID}&quot;);
           <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${numberOfUsers}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__groovy(new File(&apos;D:/JMeter/account_list.csv&apos;).readLines().size(),)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.delayedStart">false</boolProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
