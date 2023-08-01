@@ -118,7 +118,8 @@
     listActions.forEach(s => {
         var item = map[s];
         if (item) {
-            document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}`).forEach(el=>{
+            document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}`).forEach((el, index)=>{
+                if (s.indexOf('ttd') != -1 && index >= 5) return;//limit at 5
                 var iid = el.getAttribute('i');
                 listItems.push(iid);
             });
