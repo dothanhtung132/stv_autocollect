@@ -3,105 +3,126 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
-// @author       Tung Do
-// @match        *sangtacviet.pro/truyen/*
-// @match        *sangtacvietfpt.com/truyen/*
-// @match        *sangtacviet.com/truyen/*
-// @match        *sangtacviet.me/truyen/*
-// @match        *sangtacviet.vip/truyen/*
-// @match        *14.225.254.182/truyen/*
+// @author       Tung Do (nhattieunhatkiem@gmail.com)
+// @match        *://*/user/0/
+// @match        *://*/truyen/*/*/*/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=sangtacviet.vip
 // @grant        none
 // ==/UserScript==
 
 (function () {
-  "use strict";
+    "use strict";
 
-  var luckyNumber = 1;
-  var intervalId;
-  var luckyNumberWaitTime = 15 * 60 * 1000;// 5 minutes
-  var host = 'http://14.225.254.182';
+    var div = document.createElement('div');
+    div.id = 'notification';
+    div.style = 'position: absolute;top: 0;right: 0;border: 1px solid gray;border-radius: 5px;padding: 10px;background-color: #ccc;margin: 10px;display:none;';
+    document.body.appendChild(div);
 
-  var request = ({ url, params }) => {
-    url = (url || "/index.php");
-    return new Promise((resolve, reject) => {
-      var http = new XMLHttpRequest();
-      http.open("POST", url, true);
-      http.setRequestHeader(
-        "Content-type",
-        "application/x-www-form-urlencoded"
-      );
-      http.onreadystatechange = function () {
-        if (http.readyState == 4 && http.status == 200) {
-          var response = http.responseText;
-          try {
-            if (params) {
-              var itemInfo = JSON.parse(response);
-              resolve(itemInfo);
-            } else {
-              resolve(response);
-            }
-          } catch (f) {
-            reject({
-              message: response,
-            });
-          }
-        } else if (http.status !== 200) {
-          reject({
-            message: "Failed to make request",
-          });
-        }
-      };
-      http.send(params);
-    });
-  };
-
-  var checkItem = () => {
-    var params = "ngmar=collect&ajax=collect";
-    return request({ params });
-  };
-
-  var collectItem = () => {
-    var params = "ajax=fcollect&c=137";
-    return request({ params });
-  };
-
-  var startCollectItem = async ()=> {
-    console.log("Starting request...");
-    try {
-      var collectableItem = await checkItem();
-      if (!collectableItem.error) {
-        console.log("collectableItem :>> ", collectableItem);
-        collectItem();
-      }
-    } catch (error) {
-      console.log("error :>> ", error.message);
-      //alert(error.message);
+    div.onclick = function() {
+        hideNotification();
     }
-  }
 
-  var getLuckyNumber = async () => {
-    var url = "/user/0/";
-    var data = await request({ url });
-    var matches = data.match(/Vận khí.*?<span.*?>.*?(\d+)/s);
-    luckyNumber = matches.length > 1 ? parseInt(matches[1]) : 1;
-    console.log("luckyNumber :>> ", luckyNumber);
-    var waitTime = (luckyNumber < 50 ? 5 : luckyNumber < 150 ? 4 : luckyNumber < 250 ? 3 : 2) * 60 * 1000;
-    window.clearInterval(intervalId);
-    startInterval(waitTime);
-  };
+    var showNotification = (message) => {
+        var el = document.getElementById('notification');
+        el.textContent = message;
+        el.style.display = 'block';
+        setTimeout(() => {
+            el.style.display = 'none';
+        }, 15000)
+    }
 
-  var startInterval = (waitTime) => {
-    intervalId = window.setInterval(() => {
-        startCollectItem();
-    }, waitTime);
-  };
+    var hideNotification = () => {
+        var el = document.getElementById('notification');
+        el.style.display = 'none';
+    }
 
-  startCollectItem();
-  getLuckyNumber();
+    var request = async (params) => {
+        var url = '/index.php';
+        var retry = 0;
+        if(params && params.indexOf("ajax=")>=0){
+            url+="?ngmar="+params.substr(5,4);
+        }
+        try {
+            const response = await fetch(url, {
+                "headers": {
+                    "content-type": "application/x-www-form-urlencoded",
+                },
+                "body": params,
+                "method": "POST"
+            });
+            if (!response.ok) {
+                if (retry == 3) {
+                    retry = 0;
+                    throw new Error("Network response was not OK");
+                }
+                setTimeout(function(){
+                    request(params, retry++);
+                }, 1000);
+            } else {
+                return await response.json();
+            }
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+        }
+    };
 
-  var luckyNumberId = window.setInterval(() => {
-    getLuckyNumber();
-  }, luckyNumberWaitTime);
-  
+    var waitTime = 5 * 60 * 1000;
+    var count = 0;
+    var lucky = 1;
+    var intervalId;
+
+    var startCollectItem = async () => {
+        console.log("Starting request...");
+        try {
+            var collectableItem = await checkItem();
+            if (collectableItem) {
+                showNotification(collectableItem.info);
+                collectItem(collectableItem);
+            }
+        } catch (error) {
+            console.log("error :>> ", error.message);
+            //alert(error.message);
+        }
+    }
+
+    var checkItem = () => {
+        var params = "ngmar=collect&ajax=collect";
+        return request(params);
+    };
+
+    var collectItem = (collectableItem) => {
+        count++;
+        var params = "ajax=fcollect&c=137";
+        var result = request(params);
+    };
+
+    var getLucky = async () => {
+        var url = "/user/0/";
+        var response = await fetch(url);
+        var data = await response.text();
+        var matches = data.match(/Vận khí.*?<span.*?>.*?(\d+)/s);
+        lucky = matches.length > 1 ? parseInt(matches[1]) : 1;
+        var waitTime =
+            (lucky < 50
+             ? 5
+             : lucky < 150
+             ? 4
+             : lucky < 250
+             ? 3
+             : 2) *
+            60 *
+            1000;
+        window.clearInterval(intervalId);
+        startInterval(waitTime);
+    };
+
+    startCollectItem();
+    getLucky();
+
+    var startInterval = (waitTime) => {
+        intervalId = window.setInterval(() => {
+            startCollectItem();
+        }, waitTime);
+    };
+
 })();
