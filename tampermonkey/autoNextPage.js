@@ -18,5 +18,5 @@
 
 (function () {
   "use strict";
-  setTimeout(() => {document.querySelector('#navnexttop').click()}, 5000);
+  setTimeout(() => {document.querySelector('#navnexttop').click()}, 1000);
 })();
