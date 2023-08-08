@@ -125,7 +125,7 @@
         }
     });
     document.querySelectorAll("button.btn-primary").forEach(btn => {
-        if (btn.textContent.includes("Nộp lên")) {
+        if (btn.textContent.includes("Nộp lên") && list.length > 0) {
             btn.click();
             return;
         }
