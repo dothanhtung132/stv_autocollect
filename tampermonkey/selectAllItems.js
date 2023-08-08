@@ -19,7 +19,7 @@
     all = chon tat ca
 */
 
-(function() {
+(function () {
     'use strict';
     // Your code here...
     var search = document.location.search;
@@ -117,11 +117,17 @@
     list.forEach(s => {
         var item = map[s];
         if (item) {
-            document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}:not([hide="hide"])`).forEach(el=>{
+            document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}:not([hide="hide"])`).forEach(el => {
                 el.click();
                 var n = el.getAttribute('n');
-                if (n) Array.from({length: n-1}, () => el.click());
+                if (n) Array.from({ length: n - 1 }, () => el.click());
             });
         }
-    })
+    });
+    document.querySelectorAll("button.btn-primary").forEach(btn => {
+        if (btn.textContent.includes("Nộp lên")) {
+            btn.click();
+            return;
+        }
+    });
 })();
