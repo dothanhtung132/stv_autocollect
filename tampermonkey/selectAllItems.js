@@ -114,18 +114,20 @@
         }
     }
     var list = search.split('=')[1].split('-');
+    var submit = false;
     list.forEach(s => {
         var item = map[s];
         if (item) {
             document.querySelectorAll(`#tuitruvat a${item.e ? `[e="${item.e}"]` : ''}${item.l ? `[l="${item.l}"]` : ''}${item.tag ? `[tag="${item.tag}"]` : ''}:not([hide="hide"])`).forEach(el => {
                 el.click();
+                submit = true;
                 var n = el.getAttribute('n');
                 if (n) Array.from({ length: n - 1 }, () => el.click());
             });
         }
     });
     document.querySelectorAll("button.btn-primary").forEach(btn => {
-        if (btn.textContent.includes("Nộp lên") && list.length > 0) {
+        if (btn.textContent.includes("Nộp lên") && submit == true) {
             btn.click();
             return;
         }
