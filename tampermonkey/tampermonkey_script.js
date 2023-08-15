@@ -18,7 +18,7 @@
     div.style = 'position: absolute;top: 0;right: 0;border: 1px solid gray;border-radius: 5px;padding: 10px;background-color: #ccc;margin: 10px;display:none;';
     document.body.appendChild(div);
 
-    div.onclick = function() {
+    div.onclick = function () {
         hideNotification();
     }
 
@@ -39,8 +39,8 @@
     var request = async (params) => {
         var url = '/index.php';
         var retry = 0;
-        if(params && params.indexOf("ajax=")>=0){
-            url+="?ngmar="+params.substr(5,4);
+        if (params && params.indexOf("ajax=") >= 0) {
+            url += "?ngmar=" + params.substr(5, 4);
         }
         try {
             const response = await fetch(url, {
@@ -55,7 +55,7 @@
                     retry = 0;
                     throw new Error("Network response was not OK");
                 }
-                setTimeout(function(){
+                setTimeout(function () {
                     request(params, retry++);
                 }, 1000);
             } else {
@@ -93,7 +93,13 @@
     var collectItem = (collectableItem) => {
         count++;
         var params = "ajax=fcollect&c=137";
-        var result = request(params);
+        var cType = collectableItem.type;
+        if (cType == 3) {
+            let nname = "【⚡ Lôi Chi Pháp Tắc 】";
+            let qq = "Quy tắc trong thiên địa, ẩn chứa lôi đình chi lực. Đòn tấn công có thể gây choáng nặng. Tăng tỉ lệ lĩnh ngộ Lôi pháp tắc !";
+            params += "&newname=" + encodeURI(nname) + "&newinfo=" + encodeURI(qq);
+        }
+        return request(params);
     };
 
     var getLucky = async () => {
@@ -104,12 +110,12 @@
         lucky = matches.length > 1 ? parseInt(matches[1]) : 1;
         var waitTime =
             (lucky < 50
-             ? 5
-             : lucky < 150
-             ? 4
-             : lucky < 250
-             ? 3
-             : 2) *
+                ? 5
+                : lucky < 150
+                    ? 4
+                    : lucky < 250
+                        ? 3
+                        : 2) *
             60 *
             1000;
         window.clearInterval(intervalId);
