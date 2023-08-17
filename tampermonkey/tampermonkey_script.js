@@ -22,6 +22,32 @@
         hideNotification();
     }
 
+    var listPT = [{
+        name: '【⚡ Lôi Chi Pháp Tắc 】',
+        info: 'Quy tắc trong thiên địa, ẩn chứa lôi đình chi lực. Đòn tấn công có thể gây choáng nặng. Tăng tỉ lệ lĩnh ngộ Lôi pháp tắc !'
+    }, {
+        name: '【 Dẫn Lôi Thuật 】',
+        info: 'Dẫn Lôi Thuật là một cái phép thuật hệ lôi, dùng để triệu hoán sét từ trên trời đánh xuống.'
+    }, {
+        name: '【 Tụ Lý Càn Khôn 】',
+        info: 'Tụ Lý Càn Khôn là phép thuật thu nhỏ vật, người rồi hút vào trong ống tay áo.Khi phóng ra từ ống tay áo thì vật thu nhỏ trở lại thể tích như cũ.'
+    }, {
+        name: '【 Chưởng Tâm Lôi 】',
+        info: 'Chưởng Tâm Lôi là một cái phép thuật điều khiển sấm sét, chuyên dùng để đối phó các quỷ vật.'
+    }, {
+        name: '【 Bình Thổ Chú 】',
+        info: 'Bình Thổ Chú là phép thuật hệ Thổ, dùng để lấp hố bằng cách hội tụ đất đá, cát ở xung quanh.'
+    }, {
+        name: '【 Thuật Quy Tức 】',
+        info: 'Quy Tức Thuật là Phép Thuật giúp giảm số lần hít thở. Việc giảm hít thở giúp Tu Sĩ có thể đi vào những nơi thiếu dưỡng khí như dưới nước, sâu trong lòng đất hay môi trường chân không.'
+    }, {
+        name: '【 Bá Thần Trụ 】',
+        info: 'Bá Thần Trụ có thể công kích, phòng ngự, huyễn thuật, chữa trị, cường hóa, phong ấn,tạo ra trận pháp bằng trụ,.. Có thể nói là có nhiều tác dụng đa dạng.'
+    }, {
+        name: '【 Cuồng Phong Độn Pháp 】',
+        info: 'Khi sử dụng, trên thân đao hiện lên gió bão màu xanh, phát ra âm thanh ầm ầm như xe thể thao.'
+    }]
+
     var showNotification = (message) => {
         var el = document.getElementById('notification');
         el.textContent = message;
@@ -36,12 +62,9 @@
         el.style.display = 'none';
     }
 
-    var request = async (params) => {
-        var url = '/index.php';
+    var request = async (params, url) => {
+        url = url || '/index.php';
         var retry = 0;
-        if (params && params.indexOf("ajax=") >= 0) {
-            url += "?ngmar=" + params.substr(5, 4);
-        }
         try {
             const response = await fetch(url, {
                 "headers": {
@@ -92,14 +115,16 @@
 
     var collectItem = (collectableItem) => {
         count++;
+        var url = '/index.php?ngmar=fcl';
         var params = "ajax=fcollect&c=137";
         var cType = collectableItem.type;
         if (cType == 3) {
-            let nname = "【⚡ Lôi Chi Pháp Tắc 】";
-            let qq = "Quy tắc trong thiên địa, ẩn chứa lôi đình chi lực. Đòn tấn công có thể gây choáng nặng. Tăng tỉ lệ lĩnh ngộ Lôi pháp tắc !";
-            params += "&newname=" + encodeURI(nname) + "&newinfo=" + encodeURI(qq);
+            let min = 0;
+            let max = listPT.length;
+            let pt = listPT[parseInt(Math.random() * (max - min) + min)];
+            params += "&newname=" + encodeURI(pt.name) + "&newinfo=" + encodeURI(pt.info);
         }
-        return request(params);
+        return request(params, url);
     };
 
     var getLucky = async () => {
@@ -130,5 +155,26 @@
             startCollectItem();
         }, waitTime);
     };
+
+    var addOnlineTime = function() {
+        var url = '/index.php?ngmar=ol2';
+        var params = "sajax=online&ngmar=ol";
+        return request(params, url);
+    }
+
+    var addPageCount = function() {
+        var params = "sajax=read";
+        return request(params);
+    }
+
+    var userid;
+    var addOnlineTimeInterval = () => {
+        window.setInterval(() => {
+            addOnlineTime();
+        }, 5 * 60 * 1000);
+    };
+
+    addOnlineTimeInterval();
+
 
 })();
