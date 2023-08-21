@@ -114,6 +114,9 @@
         }
     }
     var list = search.split('=')[1].split('-');
+    if (list[0] == 'all') {
+        list = ['lt','cp','tld','tvd','tkd','ttd'];
+    }
     var submit = false;
     list.forEach(s => {
         var item = map[s];
