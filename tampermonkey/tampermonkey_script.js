@@ -15,7 +15,7 @@
 
     var div = document.createElement('div');
     div.id = 'notification';
-    div.style = 'position: absolute;top: 0;right: 0;border: 1px solid gray;border-radius: 5px;padding: 10px;background-color: #ccc;margin: 10px;display:none;';
+    div.style = 'position: fixed;top: 0;right: 0;border: 1px solid gray;border-radius: 5px;padding: 10px;background-color: #ccc;margin: 10px;display:none;';
     document.body.appendChild(div);
 
     div.onclick = function () {
@@ -89,7 +89,6 @@
         }
     };
 
-    var waitTime = 5 * 60 * 1000;
     var count = 0;
     var lucky = 1;
     var intervalId;
@@ -156,13 +155,13 @@
         }, waitTime);
     };
 
-    var addOnlineTime = function() {
+    var addOnlineTime = function () {
         var url = '/index.php?ngmar=ol2';
         var params = "sajax=online&ngmar=ol";
         return request(params, url);
     }
 
-    var addPageCount = function() {
+    var addPageCount = function () {
         var params = "sajax=read";
         return request(params);
     }
