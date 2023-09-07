@@ -29,9 +29,6 @@
         name: '【 Dẫn Lôi Thuật 】',
         info: 'Dẫn Lôi Thuật là một cái phép thuật hệ lôi, dùng để triệu hoán sét từ trên trời đánh xuống.'
     }, {
-        name: '【 Tụ Lý Càn Khôn 】',
-        info: 'Tụ Lý Càn Khôn là phép thuật thu nhỏ vật, người rồi hút vào trong ống tay áo.Khi phóng ra từ ống tay áo thì vật thu nhỏ trở lại thể tích như cũ.'
-    }, {
         name: '【 Chưởng Tâm Lôi 】',
         info: 'Chưởng Tâm Lôi là một cái phép thuật điều khiển sấm sét, chuyên dùng để đối phó các quỷ vật.'
     }, {
@@ -62,8 +59,11 @@
         el.style.display = 'none';
     }
 
-    var request = async (params, url) => {
-        url = url || '/index.php';
+    var request = async (params, query) => {
+        var url = '/index.php';
+        if (query) {
+            url = url + query;
+        }
         var retry = 0;
         try {
             const response = await fetch(url, {
@@ -96,16 +96,25 @@
     var startCollectItem = async () => {
         console.log("Starting request...");
         try {
-            var collectableItem = await checkItem();
-            if (collectableItem) {
-                showNotification(collectableItem.info);
-                collectItem(collectableItem);
+            var response = await isCollectible();
+            if (response.code == 1) {
+                var collectableItem = await checkItem();
+                if (collectableItem) {
+                    showNotification(collectableItem.info);
+                    collectItem(collectableItem);
+                }
             }
         } catch (error) {
             console.log("error :>> ", error.message);
             //alert(error.message);
         }
     }
+
+    var isCollectible = () => {
+        var params = "ngmar=tcollect&ajax=trycollect&ngmar=iscollectable";
+        var query = "?ngmar=iscollectable";
+        return request(params, query);
+    };
 
     var checkItem = () => {
         var params = "ngmar=collect&ajax=collect";
@@ -114,8 +123,11 @@
 
     var collectItem = (collectableItem) => {
         count++;
-        var url = '/index.php?ngmar=fcl';
-        var params = "ajax=fcollect&c=137";
+        var query = "?ngmar=fcl";
+        var max = 800000
+        var min = 100000
+        var chapNumber = Math.random() * (max - min) + min;;
+        var params = "ajax=fcollect&c=" + parseInt(chapNumber);
         var cType = collectableItem.type;
         if (cType == 3) {
             let min = 0;
@@ -123,7 +135,7 @@
             let pt = listPT[parseInt(Math.random() * (max - min) + min)];
             params += "&newname=" + encodeURI(pt.name) + "&newinfo=" + encodeURI(pt.info);
         }
-        return request(params, url);
+        return request(params, query);
     };
 
     var getLucky = async () => {
@@ -171,6 +183,9 @@
         window.setInterval(() => {
             addOnlineTime();
         }, 5 * 60 * 1000);
+        window.setInterval(() => {
+            addPageCount();
+        }, 4 * 60 * 1000);
     };
 
     addOnlineTimeInterval();
