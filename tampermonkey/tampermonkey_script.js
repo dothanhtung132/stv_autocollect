@@ -82,7 +82,12 @@
                     request(params, retry++);
                 }, 1000);
             } else {
-                return await response.json();
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch {
+                    return text;
+                }
             }
         } catch (error) {
             console.error("There has been a problem with your fetch operation:", error);
