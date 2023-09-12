@@ -105,11 +105,15 @@
         try {
             var response = await isCollectible();
             if (response.code == 1) {
-                var collectableItem = await checkItem();
-                if (collectableItem) {
-                    showNotification(collectableItem.info);
-                    collectItem(collectableItem);
-                }
+                setTimeout(async () => {
+                    var collectableItem = await checkItem();
+                    if (collectableItem) {
+                        setTimeout(() => {
+                            showNotification(collectableItem.info);
+                            collectItem(collectableItem);
+                        }, rand(1, 5))
+                    }
+                }, rand(1, 5))
             }
         } catch (error) {
             console.log("error :>> ", error.message);
