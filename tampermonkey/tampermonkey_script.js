@@ -59,6 +59,8 @@
         el.style.display = 'none';
     }
 
+    var rand = (min, max) => parseInt(Math.random() * (max - min) + min);
+
     var request = async (params, query) => {
         var url = '/index.php';
         if (query) {
@@ -129,21 +131,16 @@
     var collectItem = (collectableItem) => {
         count++;
         var query = "?ngmar=fcl";
-        var max = 800000
-        var min = 100000
-        var chapNumber = Math.random() * (max - min) + min;;
-        var params = "ajax=fcollect&c=" + parseInt(chapNumber);
+        var params = "ajax=fcollect&c=" + rand(10000, 800000);
         var cType = collectableItem.type;
         if (cType == 3) {
-            let min = 0;
-            let max = listPT.length;
-            let pt = listPT[parseInt(Math.random() * (max - min) + min)];
+            let pt = listPT[rand(0, listPT.length)];
             params += "&newname=" + encodeURI(pt.name) + "&newinfo=" + encodeURI(pt.info);
         }
         return request(params, query);
     };
 
-    var getLucky = async () => {
+    var getLuckyNumber = async () => {
         var url = "/user/0/";
         var response = await fetch(url);
         var data = await response.text();
@@ -163,37 +160,45 @@
         startInterval(waitTime);
     };
 
-    startCollectItem();
-    getLucky();
+    var addPageCount = function () {
+        var query = '?ngmar=readcounter'
+        var params = "sajax=read";
+        return request(params, query);
+    }
 
     var startInterval = (waitTime) => {
         intervalId = window.setInterval(() => {
-            startCollectItem();
+            if (count == 10) {
+                window.location.reload();
+                return
+            }
+            addPageCount();
+            setTimeout(async () => {
+                startCollectItem();
+            }, rand(10, 50) * 1000);
         }, waitTime);
     };
 
-    var addOnlineTime = function () {
-        var url = '/index.php?ngmar=ol2';
-        var params = "sajax=online&ngmar=ol";
-        return request(params, url);
-    }
+    startCollectItem();
+    getLuckyNumber();
 
-    var addPageCount = function () {
-        var params = "sajax=read";
-        return request(params);
-    }
+    // var addOnlineTime = function () {
+    //     var url = '/index.php?ngmar=ol2';
+    //     var params = "sajax=online&ngmar=ol";
+    //     return request(params, url);
+    // }
 
-    var userid;
-    var addOnlineTimeInterval = () => {
-        window.setInterval(() => {
-            addOnlineTime();
-        }, 5 * 60 * 1000);
-        window.setInterval(() => {
-            addPageCount();
-        }, 4 * 60 * 1000);
-    };
+    // var userid;
+    // var addOnlineTimeInterval = () => {
+    //     window.setInterval(() => {
+    //         addOnlineTime();
+    //     }, 5 * 60 * 1000);
+    //     window.setInterval(() => {
+    //         addPageCount();
+    //     }, 4 * 60 * 1000);
+    // };
 
-    addOnlineTimeInterval();
+    // addOnlineTimeInterval();
 
 
 })();
