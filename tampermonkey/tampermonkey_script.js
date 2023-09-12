@@ -107,7 +107,7 @@
             if (response.code == 1) {
                 setTimeout(async () => {
                     var collectableItem = await checkItem();
-                    if (collectableItem) {
+                    if (collectableItem && collectableItem.info) {
                         setTimeout(() => {
                             showNotification(collectableItem.info);
                             collectItem(collectableItem);
@@ -150,16 +150,7 @@
         var data = await response.text();
         var matches = data.match(/Vận khí.*?<span.*?>.*?(\d+)/s);
         lucky = matches.length > 1 ? parseInt(matches[1]) : 1;
-        var waitTime =
-            (lucky < 50
-                ? 5
-                : lucky < 150
-                    ? 4
-                    : lucky < 250
-                        ? 3
-                        : 2) *
-            60 *
-            1000;
+        var waitTime = (lucky < 50 ? 10 : lucky < 150 ? 6 : lucky < 250 ? 4 : 2) * 60 * 1000;
         window.clearInterval(intervalId);
         startInterval(waitTime);
     };
